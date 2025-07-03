@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Panel de Administración";
+}
+
+<h2 class="text-center mt-4">Panel de Administración - SPA de Belleza</h2>
+
+<div class="row mt-5 text-center">
+
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Servicios</h5>
+                <p class="card-text">Gestionar servicios ofrecidos.</p>
+                <a asp-controller="Servicios" asp-action="Index" class="btn btn-primary">Ver Servicios</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Profesionales</h5>
+                <p class="card-text">Gestionar profesionales del equipo.</p>
+                <a asp-controller="Profesionales" asp-action="Index" class="btn btn-primary">Ver Profesionales</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Clientes</h5>
+                <p class="card-text">Consultar o editar datos de clientes.</p>
+                <a asp-controller="Clientes" asp-action="Index" class="btn btn-primary">Ver Clientes</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Turnos</h5>
+                <p class="card-text">Ver y administrar turnos reservados.</p>
+                <a asp-controller="Turnos" asp-action="Index" class="btn btn-primary">Ver Turnos</a>
+            </div>
+        </div>
+    </div>
+
+</div>

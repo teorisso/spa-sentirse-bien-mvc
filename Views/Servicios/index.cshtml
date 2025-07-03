@@ -1,0 +1,30 @@
+<!-- Views/Servicios/Index.cshtml -->
+@model IEnumerable<Servicio>
+
+<h2>Listado de Servicios</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Duración</th>
+            <th>Precio</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var s in Model)
+    {
+        <tr>
+            <td>@s.Nombre</td>
+            <td>@s.Categoria</td>
+            <td>@s.DuracionMinutos min</td>
+            <td>$@s.Precio</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@s.Id">Editar</a> |
+                <a asp-action="Details" asp-route-id="@s.Id">Detalle</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

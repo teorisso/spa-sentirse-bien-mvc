@@ -1,0 +1,110 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+:root {
+  --primary: #00BFFF;
+  --primary-dark: #00A8DC;
+  --bg-dark: #111111;
+  --text-main: #111111;
+  --text-secondary: #3E3E3E;
+}
+
+body {
+  background-color: var(--primary);
+  font-family: 'Roboto', sans-serif;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.navbar {
+  background-color: white;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  color: var(--primary) !important;
+}
+
+.nav-link {
+  color: var(--text-main) !important;
+}
+
+.container, .card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2, h3, h4 {
+  color: var(--text-main);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.badge.bg-success {
+  background-color: #28a745;
+}
+
+.badge.bg-danger {
+  background-color: #dc3545;
+}
+
+footer {
+  background-color: #ffffff10;
+  color: white;
+  padding: 1rem 0;
+}
+footer a:hover {
+    color: #ffffffcc;
+    text-decoration: none;
+}
+
+footer .bi {
+    transition: transform 0.2s;
+}
+
+footer .bi:hover {
+    transform: scale(1.2);
+}
+footer {
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
