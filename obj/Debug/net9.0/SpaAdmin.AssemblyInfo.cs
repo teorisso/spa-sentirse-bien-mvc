@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("3a917e2c-53e8-49e5-8f5a-e69b898d21ab")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("SpaAdmin")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d264302edb2fe61afad39213ef9be86a323bd5fb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9349448238651d9598b2ff83ef93cb39376cb927")]
 [assembly: System.Reflection.AssemblyProductAttribute("SpaAdmin")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SpaAdmin")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

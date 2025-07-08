@@ -1,5 +1,9 @@
 using MongoDB.Driver;
 using SpaAdmin.Data;
+using DotNetEnv;
+
+// Cargar variables de entorno desde el archivo .env
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 

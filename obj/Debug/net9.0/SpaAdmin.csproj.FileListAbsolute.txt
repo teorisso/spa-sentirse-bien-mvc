@@ -252,3 +252,5 @@ D:\spa-sentirse-bien\spa-sentirse-bien-mvc\obj\Debug\net9.0\refint\SpaAdmin.dll
 D:\spa-sentirse-bien\spa-sentirse-bien-mvc\obj\Debug\net9.0\SpaAdmin.pdb
 D:\spa-sentirse-bien\spa-sentirse-bien-mvc\obj\Debug\net9.0\SpaAdmin.genruntimeconfig.cache
 D:\spa-sentirse-bien\spa-sentirse-bien-mvc\obj\Debug\net9.0\ref\SpaAdmin.dll
+D:\spa-sentirse-bien\spa-sentirse-bien-mvc\bin\Debug\net9.0\DotNetEnv.dll
+D:\spa-sentirse-bien\spa-sentirse-bien-mvc\bin\Debug\net9.0\Sprache.dll
