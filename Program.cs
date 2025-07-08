@@ -1,18 +1,33 @@
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using SpaAdmin.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Agregar DbContext con cadena de conexión
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Configurar MongoDB
+builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("MongoDB");
+    return new MongoClient(connectionString);
+});
 
-// Resto de la configuración...
+// Registrar ApplicationDbContext como servicio
+builder.Services.AddScoped<ApplicationDbContext>();
+
+// Agregar servicios MVC
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Middleware...
+// Configure the HTTP request pipeline
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
 app.UseRouting();
 app.UseAuthorization();
 
