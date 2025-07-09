@@ -21,5 +21,23 @@ namespace SpaAdmin.Controllers
             var profesionales = await _context.Profesionales.Find(Builders<Profesional>.Filter.Empty).ToListAsync();
             return View(profesionales);
         }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Profesional profesional)
+        {
+            if (ModelState.IsValid)
+            {
+                await _context.Profesionales.InsertOneAsync(profesional);
+                TempData["Success"] = "Profesional creado exitosamente";
+                return RedirectToAction(nameof(Index));
+            }
+            return View(profesional);
+        }
     }
 } 
