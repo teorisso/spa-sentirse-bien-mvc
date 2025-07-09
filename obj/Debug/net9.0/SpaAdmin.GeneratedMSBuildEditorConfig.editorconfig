@@ -48,7 +48,15 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+<<<<<<< HEAD
 [C:/Users/Martina/Desktop/TUP/Prog3/spa-sentirse-bien-mvc/Views/Profesionales/Index.cshtml]
+=======
+[C:/Users/masde/WorkSpace/SPA MVC/spa-sentirse-bien-mvc/Views/Profesionales/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmVzaW9uYWxlc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/masde/WorkSpace/SPA MVC/spa-sentirse-bien-mvc/Views/Profesionales/Index.cshtml]
+>>>>>>> 24763468013e2b772565a9a70b3bad49afbc1b97
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmVzaW9uYWxlc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
