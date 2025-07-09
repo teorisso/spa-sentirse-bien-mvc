@@ -1,4 +1,4 @@
-@model IEnumerable<SpaAdmin.Models.Profesional>
+@model IEnumerable<SpaAdmin.Models.UserDto>
 @{
     ViewData["Title"] = "Listado de Profesionales";
 }
@@ -6,6 +6,23 @@
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-10">
+            
+            @* Mostrar mensajes de éxito o error *@
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h4 class="mb-0"><i class="fas fa-user-md"></i> Profesionales</h4>
@@ -17,40 +34,64 @@
                     @if (!Model.Any())
                     {
                         <div class="alert alert-info text-center mb-0">
+                            <i class="fas fa-info-circle"></i>
                             No hay profesionales registrados.
                         </div>
                     }
                     else
                     {
+                        <div class="mb-3">
+                            <small class="text-muted">
+                                <i class="fas fa-users"></i> Total de profesionales: <strong>@Model.Count()</strong>
+                            </small>
+                        </div>
+                        
                         <div class="table-responsive">
                             <table class="table table-hover align-middle">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Id</th>
-                                        <th>Nombre Completo</th>
-                                        <th>Especialidad</th>
-                                        <th>Email</th>
-                                        <th class="text-end">Acciones</th>
+                                        <th><i class="fas fa-hashtag"></i> ID</th>
+                                        <th><i class="fas fa-user"></i> Nombre Completo</th>
+                                        <th><i class="fas fa-envelope"></i> Email</th>
+                                        <th><i class="fas fa-user-tag"></i> Rol</th>
+                                        <th class="text-end"><i class="fas fa-cogs"></i> Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var profesional in Model)
                                     {
                                         <tr>
-                                            <td>@profesional.Id</td>
-                                            <td>@profesional.NombreCompleto</td>
-                                            <td>@profesional.Especialidad</td>
-                                            <td>@profesional.Email</td>
+                                            <td>
+                                                <code class="text-muted">@profesional.Id.Substring(0, 8)...</code>
+                                            </td>
+                                            <td>
+                                                <strong>@profesional.FullName</strong>
+                                            </td>
+                                            <td>
+                                                <a href="mailto:@profesional.Email" class="text-decoration-none">
+                                                    @profesional.Email
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-user-md"></i> @profesional.Role
+                                                </span>
+                                            </td>
                                             <td class="text-end">
-                                                <a asp-action="Details" asp-route-id="@profesional.Id" class="btn btn-info btn-sm me-1">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <a asp-action="Edit" asp-route-id="@profesional.Id" class="btn btn-warning btn-sm me-1">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a asp-action="Delete" asp-route-id="@profesional.Id" class="btn btn-danger btn-sm">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Details" asp-route-id="@profesional.Id" 
+                                                       class="btn btn-info btn-sm" title="Ver detalles">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a asp-action="Edit" asp-route-id="@profesional.Id" 
+                                                       class="btn btn-warning btn-sm" title="Editar">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-danger btn-sm" 
+                                                            title="Eliminar" onclick="confirmarEliminacion('@profesional.Id', '@profesional.FullName')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     }
@@ -62,4 +103,14 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+<script>
+function confirmarEliminacion(id, nombre) {
+    if (confirm(`¿Estás seguro de que deseas eliminar al profesional "${nombre}"?`)) {
+        // Aquí se puede implementar la eliminación via AJAX
+        // Por ahora mostrar un mensaje de que la funcionalidad está pendiente
+        alert('Funcionalidad de eliminación pendiente de implementar');
+    }
+}
+</script> 

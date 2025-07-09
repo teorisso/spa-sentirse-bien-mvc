@@ -20,8 +20,20 @@ builder.Services.AddScoped<ApplicationDbContext>();
 
 // Agregar servicios MVC
 builder.Services.AddControllersWithViews();
-builder.Services.AddHttpClient<IApiAuthService, ApiAuthService>();
-builder.Services.AddHttpClient<IApiClient, ApiClient>();
+
+// Configurar HttpClient para ApiAuthService con BaseAddress
+builder.Services.AddHttpClient<IApiAuthService, ApiAuthService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5018/api/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+// Configurar HttpClient para ApiClient con BaseAddress
+builder.Services.AddHttpClient<IApiClient, ApiClient>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5018/api/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
 
 var app = builder.Build();
 

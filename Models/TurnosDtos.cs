@@ -6,6 +6,11 @@ namespace SpaAdmin.Models
         public string? FirstName   { get; set; }
         public string? LastName    { get; set; }
         public string? Email       { get; set; }
+        public string? Role        { get; set; }
+        public bool IsAdmin        { get; set; }
+        
+        // Propiedad calculada para mostrar nombre completo
+        public string FullName => $"{FirstName} {LastName}".Trim();
     }
 
     public class ServiceDto

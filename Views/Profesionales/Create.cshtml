@@ -1,4 +1,4 @@
-@model SpaAdmin.Models.Profesional
+@model SpaAdmin.Controllers.CreateProfesionalDto
 @{
     ViewData["Title"] = "Nuevo Profesional";
 }
@@ -6,33 +6,76 @@
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
+            
+            @* Mostrar mensajes de error *@
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0"><i class="fas fa-user-plus"></i> Nuevo Profesional</h4>
                 </div>
                 <div class="card-body">
                     <form asp-action="Create" method="post">
-                        <div class="mb-3">
-                            <label asp-for="NombreCompleto" class="form-label fw-bold"></label>
-                            <input asp-for="NombreCompleto" class="form-control" placeholder="Ej: María López" />
-                            <span asp-validation-for="NombreCompleto" class="text-danger"></span>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FirstName" class="form-label fw-bold">
+                                    <i class="fas fa-user"></i> @Html.DisplayNameFor(m => m.FirstName)
+                                </label>
+                                <input asp-for="FirstName" class="form-control" placeholder="Ej: María" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="LastName" class="form-label fw-bold">
+                                    <i class="fas fa-user"></i> @Html.DisplayNameFor(m => m.LastName)
+                                </label>
+                                <input asp-for="LastName" class="form-control" placeholder="Ej: López" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
                         </div>
+                        
                         <div class="mb-3">
-                            <label asp-for="Especialidad" class="form-label fw-bold"></label>
-                            <input asp-for="Especialidad" class="form-control" placeholder="Ej: Masajes" />
-                            <span asp-validation-for="Especialidad" class="text-danger"></span>
-                        </div>
-                        <div class="mb-3">
-                            <label asp-for="Email" class="form-label fw-bold"></label>
-                            <input asp-for="Email" class="form-control" placeholder="Ej: maria@spa.com" />
+                            <label asp-for="Email" class="form-label fw-bold">
+                                <i class="fas fa-envelope"></i> @Html.DisplayNameFor(m => m.Email)
+                            </label>
+                            <input asp-for="Email" class="form-control" placeholder="Ej: maria.lopez@sentirsebien.com" />
                             <span asp-validation-for="Email" class="text-danger"></span>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle"></i> 
+                                Se usará para el acceso al sistema del profesional.
+                            </div>
                         </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label fw-bold">
+                                <i class="fas fa-key"></i> @Html.DisplayNameFor(m => m.Password)
+                            </label>
+                            <input asp-for="Password" type="password" class="form-control" 
+                                   placeholder="Contraseña temporal (mínimo 6 caracteres)" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle"></i> 
+                                El profesional podrá cambiar su contraseña después del primer acceso.
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Información:</strong> Se creará una cuenta con rol de profesional 
+                            que tendrá acceso al panel de gestión de turnos.
+                        </div>
+                        
                         <div class="d-flex justify-content-between">
                             <a asp-action="Index" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Volver
+                                <i class="fas fa-arrow-left"></i> Volver al Listado
                             </a>
                             <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save"></i> Guardar
+                                <i class="fas fa-save"></i> Crear Profesional
                             </button>
                         </div>
                     </form>
