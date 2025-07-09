@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SpaAdmin")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1f63c934d5767c906d946373d3d1b51bfa152727")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4e1bf84c0f8c60e3a764f0cbbdbfa73155a566b8")]
 [assembly: System.Reflection.AssemblyProductAttribute("SpaAdmin")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SpaAdmin")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
