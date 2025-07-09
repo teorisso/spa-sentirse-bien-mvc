@@ -13,7 +13,7 @@ namespace SpaAdmin.Data
             _database = mongoClient.GetDatabase(databaseName);
         }
 
-        public IMongoCollection<Cliente> Clientes => _database.GetCollection<Cliente>("clientes");
+        public IMongoCollection<Cliente> Clientes => _database.GetCollection<Cliente>("users");
         public IMongoCollection<Profesional> Profesionales => _database.GetCollection<Profesional>("profesionales");
         public IMongoCollection<Servicio> Servicios => _database.GetCollection<Servicio>("services");
         public IMongoCollection<Turno> Turnos => _database.GetCollection<Turno>("turnos");
