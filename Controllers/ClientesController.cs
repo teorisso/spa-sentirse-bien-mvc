@@ -62,11 +62,15 @@ namespace SpaAdmin.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Obtener el cliente original para conservar el rol si no viene del formulario
+                var clienteOriginal = await _context.Clientes.Find(c => c.Id == id).FirstOrDefaultAsync();
+                var rolFinal = string.IsNullOrEmpty(cliente.Role) ? clienteOriginal?.Role : cliente.Role;
+
                 var update = Builders<Cliente>.Update
                     .Set(c => c.FirstName, cliente.FirstName)
                     .Set(c => c.LastName, cliente.LastName)
                     .Set(c => c.Email, cliente.Email)
-                    .Set(c => c.Role, cliente.Role);
+                    .Set(c => c.Role, rolFinal);
                 await _context.Clientes.UpdateOneAsync(c => c.Id == id, update);
                 return RedirectToAction(nameof(Index));
             }
