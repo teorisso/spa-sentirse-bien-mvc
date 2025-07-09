@@ -1,0 +1,30 @@
+@model SpaAdmin.Models.Cliente
+@{
+    ViewData["Title"] = "Eliminar Cliente";
+}
+
+<h2>Eliminar Cliente</h2>
+
+<h4>¿Estás seguro que deseas eliminar este cliente?</h4>
+<!-- <div class="mb-3">
+    <label class="form-label">Id:</label>
+    <span>@Model.Id</span>
+</div> -->
+<div class="mb-3">
+    <label class="form-label">Nombre:</label>
+    <span>@Model.FirstName</span>
+</div>
+<div class="mb-3">
+    <label class="form-label">Apellido:</label>
+    <span>@Model.LastName</span>
+</div>
+<div class="mb-3">
+    <label class="form-label">Email:</label>
+    <span>@Model.Email</span>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form> 

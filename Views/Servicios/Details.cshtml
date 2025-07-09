@@ -7,60 +7,51 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header bg-primary text-white">
                     <h4><i class="fas fa-spa"></i> Detalles del Servicio</h4>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <!-- Información principal -->
                         <div class="col-md-8">
-                            <h2 class="text-primary mb-3">@Model.Nombre</h2>
-                            
-                            <div class="row mb-4">
-                                <div class="col-md-6">
-                                    <div class="info-item mb-3">
-                                        <label class="fw-bold text-muted">
-                                            <i class="fas fa-list text-primary"></i> Categoría:
-                                        </label>
-                                        <div class="mt-1">
-                                            @if (!string.IsNullOrEmpty(Model.Categoria))
-                                            {
-                                                <span class="badge bg-primary fs-6">@Model.Categoria</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-secondary fs-6">Sin categoría</span>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="info-item mb-3">
-                                        <label class="fw-bold text-muted">
-                                            <i class="fas fa-dollar-sign text-warning"></i> Precio:
-                                        </label>
-                                        <div class="mt-1">
-                                            @if (Model.Precio.HasValue)
-                                            {
-                                                <h3 class="text-warning mb-0">$@Model.Precio.Value.ToString("N2")</h3>
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted">No definido</span>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <h2 class="text-primary mb-3 fw-bold">@Model.Nombre</h2>
 
-                            <div class="row mb-4">
-                                <div class="col-md-12">
-                                    <div class="info-item mb-3">
-                                        <label class="fw-bold text-muted">
-                                            <i class="fas fa-key text-info"></i> ID:
-                                        </label>
-                                        <div class="mt-1">
-                                            <code class="text-info">@Model.Id</code>
+                            <!-- Tarjeta de resumen visual -->
+                            <div class="card mb-4 shadow-sm border-0" style="background: linear-gradient(90deg, #e3f2fd 60%, #fff 100%);">
+                                <div class="card-body p-3">
+                                    <div class="row text-center align-items-center">
+                                        <div class="col-md-4 mb-2 mb-md-0">
+                                            <i class="fas fa-list fa-2x text-primary mb-1"></i>
+                                            <div class="text-muted small">Categoría</div>
+                                            <span class="fw-bold fs-6">@(Model.Categoria ?? "Sin categoría")</span>
+                                        </div>
+                                        <div class="col-md-4 mb-2 mb-md-0">
+                                            <i class="fas fa-dollar-sign fa-2x text-warning mb-1"></i>
+                                            <div class="text-muted small">Precio</div>
+                                            <span class="fw-bold fs-6">
+                                                @if (Model.Precio.HasValue)
+                                                {
+                                                    <span>$@Model.Precio.Value.ToString("N2")</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">No definido</span>
+                                                }
+                                            </span>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <i class="fas fa-info-circle fa-2x text-secondary mb-1"></i>
+                                            <div class="text-muted small">Descripción</div>
+                                            <span class="fw-bold fs-6">
+                                                @if (!string.IsNullOrEmpty(Model.Descripcion))
+                                                {
+                                                    @Model.Descripcion
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Sin descripción</span>
+                                                }
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -68,38 +59,26 @@
 
                             @if (!string.IsNullOrEmpty(Model.Descripcion))
                             {
-                                <div class="info-item mb-4">
-                                    <label class="fw-bold text-muted">
-                                        <i class="fas fa-info-circle text-secondary"></i> Descripción:
-                                    </label>
-                                    <div class="mt-2">
-                                        <div class="card bg-light">
-                                            <div class="card-body">
-                                                <p class="mb-0">@Model.Descripcion</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             }
                         </div>
 
                         <!-- Imagen del servicio -->
-                        <div class="col-md-4">
+                        <div class="col-md-4 d-flex align-items-center justify-content-center">
                             @if (!string.IsNullOrEmpty(Model.Imagen))
                             {
-                                <div class="text-center">
+                                <div class="text-center w-100">
                                     <label class="fw-bold text-muted mb-2 d-block">
                                         <i class="fas fa-image text-primary"></i> Imagen del Servicio:
                                     </label>
                                     <img src="@Model.Imagen" alt="@Model.Nombre" 
-                                         class="img-fluid rounded shadow-sm" 
-                                         style="max-width: 100%; max-height: 300px;"
+                                         class="img-fluid rounded shadow-sm border border-2 border-primary" 
+                                         style="max-width: 100%; max-height: 300px; object-fit: cover;"
                                          onerror="this.src='https://via.placeholder.com/300x200?text=Sin+Imagen'" />
                                 </div>
                             }
                             else
                             {
-                                <div class="text-center">
+                                <div class="text-center w-100">
                                     <label class="fw-bold text-muted mb-2 d-block">
                                         <i class="fas fa-image text-muted"></i> Imagen del Servicio:
                                     </label>
@@ -109,51 +88,6 @@
                                     </div>
                                 </div>
                             }
-                        </div>
-                    </div>
-
-                    <!-- Información adicional -->
-                    <div class="row mt-4">
-                        <div class="col-12">
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <h6 class="card-title">
-                                        <i class="fas fa-chart-bar text-info"></i> Resumen del Servicio
-                                    </h6>
-                                    <div class="row text-center">
-                                        <div class="col-md-4">
-                                            <div class="metric">
-                                                <i class="fas fa-tag fa-2x text-primary mb-2"></i>
-                                                <h6 class="text-muted">Nombre</h6>
-                                                <p class="fw-bold">@Model.Nombre</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="metric">
-                                                <i class="fas fa-list fa-2x text-success mb-2"></i>
-                                                <h6 class="text-muted">Categoría</h6>
-                                                <p class="fw-bold">@(Model.Categoria ?? "Sin categoría")</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="metric">
-                                                <i class="fas fa-dollar-sign fa-2x text-warning mb-2"></i>
-                                                <h6 class="text-muted">Precio</h6>
-                                                <p class="fw-bold">
-                                                    @if (Model.Precio.HasValue)
-                                                    {
-                                                        <span>$@Model.Precio.Value.ToString("N2")</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="text-muted">No definido</span>
-                                                    }
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
