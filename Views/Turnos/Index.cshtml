@@ -1,0 +1,112 @@
+@model List<SpaAdmin.Models.TurnoDto>
+@{
+    ViewData["Title"] = "Gestión de Turnos";
+}
+
+<h2>Gestión de Turnos</h2>
+
+<form class="row g-3 mb-4">
+    <div class="col-md-3">
+        <label class="form-label">Estado</label>
+        <select name="estado" class="form-select" onchange="this.form.submit()">
+            <option value="todos"         selected="@("todos"==ViewBag.EstadoActual)">Todos</option>
+            <option value="pendiente"     selected="@("pendiente"==ViewBag.EstadoActual)">Pendiente</option>
+            <option value="confirmado"    selected="@("confirmado"==ViewBag.EstadoActual)">Confirmado</option>
+            <option value="realizado"     selected="@("realizado"==ViewBag.EstadoActual)">Realizado</option>
+            <option value="cancelado"     selected="@("cancelado"==ViewBag.EstadoActual)">Cancelado</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Fecha</label>
+        <input type="date" name="fecha" class="form-control"
+               value="@ViewBag.FechaActual" onchange="this.form.submit()"/>
+    </div>
+</form>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Cliente</th>
+            <th>Servicio</th>
+            <th>Profesional</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Estado</th>
+            <th>QR</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var t in Model)
+{
+    <tr>
+        <td>@(t.Cliente?.FirstName) @(t.Cliente?.LastName)</td>
+        <td>@t.Servicio?.Nombre</td>
+        <td>@(t.Profesional?.FirstName) @(t.Profesional?.LastName)</td>
+        <td>@t.Fecha.ToString("dd/MM/yyyy")</td>
+        <td>@t.Hora</td>
+        <td>@t.Estado</td>
+        <td>
+            @if (t.Estado == "confirmado")
+            {
+                <button type="button" class="btn btn-sm btn-primary generate-qr-btn" data-id="@t.Id">
+                    Generar QR
+                </button>
+            }
+        </td>
+    </tr>
+}
+    </tbody>
+</table>
+
+<!-- Modal QR -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Código QR de Check-in</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="qrImage" class="img-fluid" alt="QR" />
+        <p class="mt-2">
+            <a id="qrLink" href="#" target="_blank" class="btn btn-outline-primary btn-sm">Abrir enlace QR</a>
+        </p>
+        <p class="mt-2"><small id="qrExpires"></small></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modalElement = document.getElementById('qrModal');
+        const qrModal = new bootstrap.Modal(modalElement);
+
+        // Al cerrar el modal refrescamos la página para ver el nuevo estado del turno
+        modalElement.addEventListener('hidden.bs.modal', () => window.location.reload());
+
+        document.querySelectorAll('.generate-qr-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = btn.getAttribute('data-id');
+                try {
+                    const res = await fetch('/Turnos/GenerateQRJson?id=' + id, { method: 'POST' });
+                    if (!res.ok) throw new Error('Error');
+                    const data = await res.json();
+                    document.getElementById('qrImage').src = 'data:image/png;base64,' + data.qrCodeImageBase64;
+                    document.getElementById('qrExpires').innerText = 'Expira: ' + new Date(data.expiresAt).toLocaleString();
+                    const link = document.getElementById('qrLink');
+                    link.href = data.qrCodeUrl;
+                    link.textContent = 'Abrir enlace';
+                    qrModal.show();
+                } catch {
+                    alert('No se pudo generar el QR');
+                }
+            });
+        });
+    });
+</script>
+}

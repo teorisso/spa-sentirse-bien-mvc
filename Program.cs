@@ -1,6 +1,7 @@
 using MongoDB.Driver;
 using SpaAdmin.Data;
 using DotNetEnv;
+using SpaAdmin.Services;
 
 // Cargar variables de entorno desde el archivo .env
 Env.Load();
@@ -19,6 +20,8 @@ builder.Services.AddScoped<ApplicationDbContext>();
 
 // Agregar servicios MVC
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient<IApiAuthService, ApiAuthService>();
+builder.Services.AddHttpClient<IApiClient, ApiClient>();
 
 var app = builder.Build();
 
