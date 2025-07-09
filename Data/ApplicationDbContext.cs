@@ -17,5 +17,8 @@ namespace SpaAdmin.Data
         public IMongoCollection<Profesional> Profesionales => _database.GetCollection<Profesional>("profesionales");
         public IMongoCollection<Servicio> Servicios => _database.GetCollection<Servicio>("services");
         public IMongoCollection<Turno> Turnos => _database.GetCollection<Turno>("turnos");
+        
+        // Nueva colección para usuarios (de la API)
+        public IMongoCollection<User> Users => _database.GetCollection<User>("users");
     }
 }
