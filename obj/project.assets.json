@@ -5244,19 +5244,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\masde\\.nuget\\packages\\": {}
+    "C:\\Users\\Martina\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\masde\\WorkSpace\\SPA MVC\\spa-sentirse-bien-mvc\\SpaAdmin.csproj",
+      "projectUniqueName": "C:\\Users\\Martina\\Desktop\\TUP\\Prog3\\spa-sentirse-bien-mvc\\SpaAdmin.csproj",
       "projectName": "SpaAdmin",
-      "projectPath": "C:\\Users\\masde\\WorkSpace\\SPA MVC\\spa-sentirse-bien-mvc\\SpaAdmin.csproj",
-      "packagesPath": "C:\\Users\\masde\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\masde\\WorkSpace\\SPA MVC\\spa-sentirse-bien-mvc\\obj\\",
+      "projectPath": "C:\\Users\\Martina\\Desktop\\TUP\\Prog3\\spa-sentirse-bien-mvc\\SpaAdmin.csproj",
+      "packagesPath": "C:\\Users\\Martina\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Martina\\Desktop\\TUP\\Prog3\\spa-sentirse-bien-mvc\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\masde\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Martina\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -5280,7 +5280,7 @@
         "auditLevel": "low",
         "auditMode": "direct"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "9.0.200"
     },
     "frameworks": {
       "net9.0": {
@@ -5314,7 +5314,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.202/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
