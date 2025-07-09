@@ -1,0 +1,179 @@
+@model SpaAdmin.Models.UserDto
+@{
+    ViewData["Title"] = "Detalles del Profesional";
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            
+            @* Mostrar mensajes de éxito o error *@
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="fas fa-user-md"></i> Detalles del Profesional</h4>
+                    <div>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm me-2">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">
+                                    <i class="fas fa-hashtag"></i> ID
+                                </label>
+                                <div class="form-control-plaintext">
+                                    <code>@Model.Id</code>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">
+                                    <i class="fas fa-user"></i> Nombre
+                                </label>
+                                <div class="form-control-plaintext">
+                                    @Model.FirstName
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">
+                                    <i class="fas fa-user"></i> Apellido
+                                </label>
+                                <div class="form-control-plaintext">
+                                    @Model.LastName
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">
+                                    <i class="fas fa-envelope"></i> Email
+                                </label>
+                                <div class="form-control-plaintext">
+                                    <a href="mailto:@Model.Email" class="text-decoration-none">
+                                        @Model.Email
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">
+                                    <i class="fas fa-user-tag"></i> Rol
+                                </label>
+                                <div class="form-control-plaintext">
+                                    <span class="badge bg-success fs-6">
+                                        <i class="fas fa-user-md"></i> @Model.Role
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            @if (Model.CreatedAt != default(DateTime))
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold text-muted">
+                                        <i class="fas fa-calendar-plus"></i> Fecha de Registro
+                                    </label>
+                                    <div class="form-control-plaintext">
+                                        @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-info-circle text-info"></i> Información Adicional
+                                    </h6>
+                                    <p class="card-text mb-0">
+                                        <strong>Nombre Completo:</strong> @Model.FullName
+                                    </p>
+                                    @if (Model.IsAdmin)
+                                    {
+                                        <p class="card-text mb-0 mt-2">
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-crown"></i> Administrador
+                                            </span>
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-list"></i> Ver Todos los Profesionales
+                        </a>
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Editar Profesional
+                            </a>
+                            <button type="button" class="btn btn-danger" 
+                                    onclick="confirmarEliminacion('@Model.Id', '@Model.FullName')">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmarEliminacion(id, nombre) {
+    if (confirm(`¿Estás seguro de que deseas eliminar al profesional "${nombre}"?`)) {
+        // Crear formulario para envío POST
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '@Url.Action("Delete", "Profesionales")';
+        
+        // Agregar token anti-forgery
+        var tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = '__RequestVerificationToken';
+        tokenInput.value = '@Html.AntiForgeryToken()'.replace('<input name="__RequestVerificationToken" type="hidden" value="', '').replace('" />', '');
+        form.appendChild(tokenInput);
+        
+        // Agregar ID
+        var idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'id';
+        idInput.value = id;
+        form.appendChild(idInput);
+        
+        // Enviar formulario
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script> 

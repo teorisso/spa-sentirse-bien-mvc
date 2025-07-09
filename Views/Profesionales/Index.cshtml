@@ -107,10 +107,37 @@
 
 <script>
 function confirmarEliminacion(id, nombre) {
-    if (confirm(`¿Estás seguro de que deseas eliminar al profesional "${nombre}"?`)) {
-        // Aquí se puede implementar la eliminación via AJAX
-        // Por ahora mostrar un mensaje de que la funcionalidad está pendiente
-        alert('Funcionalidad de eliminación pendiente de implementar');
+    if (confirm(`¿Estás seguro de que deseas eliminar al profesional "${nombre}"?\n\nEsta acción no se puede deshacer.`)) {
+        // Crear formulario para envío POST
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '@Url.Action("Delete", "Profesionales")';
+        
+        // Obtener token anti-forgery de manera más confiable
+        var existingToken = document.querySelector('input[name="__RequestVerificationToken"]');
+        if (existingToken) {
+            var tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = '__RequestVerificationToken';
+            tokenInput.value = existingToken.value;
+            form.appendChild(tokenInput);
+        } else {
+            alert('Error: No se pudo obtener el token de seguridad. Recargue la página e intente nuevamente.');
+            return;
+        }
+        
+        // Agregar ID
+        var idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'id';
+        idInput.value = id;
+        form.appendChild(idInput);
+        
+        // Enviar formulario
+        document.body.appendChild(form);
+        form.submit();
     }
 }
-</script> 
+</script>
+
+@Html.AntiForgeryToken() 

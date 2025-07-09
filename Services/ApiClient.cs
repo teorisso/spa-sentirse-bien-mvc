@@ -64,6 +64,20 @@ namespace SpaAdmin.Services
             return resp.IsSuccessStatusCode;
         }
 
+        public async Task<TResult?> PutAsync<TBody, TResult>(string url, TBody body) where TResult : class
+        {
+            await EnsureTokenAsync();
+            var resp = await _http.PutAsJsonAsync(url, body);
+
+            if (!resp.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("PUT {Url} devolvió {Status}", url, resp.StatusCode);
+                return default;
+            }
+            var apiResp = await resp.Content.ReadFromJsonAsync<ApiResponse<TResult>>();
+            return apiResp?.Data;
+        }
+
         public async Task<bool> DeleteAsync(string url)
         {
             await EnsureTokenAsync();
