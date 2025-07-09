@@ -1,0 +1,109 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+    
+    - name: Test
+      run: dotnet test --no-build --verbosity normal --configuration Release
+    
+    - name: Run Code Analysis
+      run: |
+        dotnet tool install --global dotnet-format
+        dotnet format --verify-no-changes
+    
+    - name: Security Scan
+      run: |
+        dotnet tool install --global dotnet-outdated-tool
+        dotnet outdated --fail-on-updates
+
+  code-quality:
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+    
+    - name: Install SonarCloud
+      uses: sonarqube-quality-gate-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        args: >
+          -Dsonar.projectKey=spa-admin
+          -Dsonar.organization=your-organization
+          -Dsonar.projectName=SPA Admin
+          -Dsonar.sources=.
+          -Dsonar.exclusions=**/bin/**,**/obj/**,**/wwwroot/lib/**
+          -Dsonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+          -Dsonar.coverage.exclusions=**/*Test*,**/*Tests*,**/*.cshtml
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: [build, code-quality]
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+    
+    - name: Publish
+      run: dotnet publish -c Release -o ./publish
+    
+    - name: Deploy to Staging
+      run: |
+        echo "Deploying to staging environment..."
+        # Aquí irían los comandos para desplegar en staging
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: [build, code-quality]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+    
+    - name: Publish
+      run: dotnet publish -c Release -o ./publish
+    
+    - name: Deploy to Production
+      run: |
+        echo "Deploying to production environment..."
+        # Aquí irían los comandos para desplegar en producción 
