@@ -1,31 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "D:\\spa-sentirse-bien\\spa-sentirse-bien-mvc\\SpaAdmin.csproj": {}
+    "C:\\Users\\masde\\WorkSpace\\SPA MVC\\spa-sentirse-bien-mvc\\SpaAdmin.csproj": {}
   },
   "projects": {
-    "D:\\spa-sentirse-bien\\spa-sentirse-bien-mvc\\SpaAdmin.csproj": {
+    "C:\\Users\\masde\\WorkSpace\\SPA MVC\\spa-sentirse-bien-mvc\\SpaAdmin.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\spa-sentirse-bien\\spa-sentirse-bien-mvc\\SpaAdmin.csproj",
+        "projectUniqueName": "C:\\Users\\masde\\WorkSpace\\SPA MVC\\spa-sentirse-bien-mvc\\SpaAdmin.csproj",
         "projectName": "SpaAdmin",
-        "projectPath": "D:\\spa-sentirse-bien\\spa-sentirse-bien-mvc\\SpaAdmin.csproj",
-        "packagesPath": "C:\\Users\\Usuario\\.nuget\\packages\\",
-        "outputPath": "D:\\spa-sentirse-bien\\spa-sentirse-bien-mvc\\obj\\",
+        "projectPath": "C:\\Users\\masde\\WorkSpace\\SPA MVC\\spa-sentirse-bien-mvc\\SpaAdmin.csproj",
+        "packagesPath": "C:\\Users\\masde\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\masde\\WorkSpace\\SPA MVC\\spa-sentirse-bien-mvc\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Usuario\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\masde\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
