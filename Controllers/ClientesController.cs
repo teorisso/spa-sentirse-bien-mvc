@@ -42,6 +42,7 @@ namespace SpaAdmin.Controllers
             if (ModelState.IsValid)
             {
                 cliente.Id = string.Empty; // MongoDB genera el Id
+                cliente.Role = "cliente"; // Asignar rol por defecto
                 await _context.Clientes.InsertOneAsync(cliente);
                 return RedirectToAction(nameof(Index));
             }
@@ -87,4 +88,4 @@ namespace SpaAdmin.Controllers
             return RedirectToAction(nameof(Index));
         }
     }
-} 
+}
