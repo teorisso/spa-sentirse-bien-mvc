@@ -125,10 +125,19 @@
                                         <td>
                                             @if (t.Estado == "confirmado")
                                             {
-                                                <button type="button" class="btn btn-sm btn-primary view-qr-btn" 
-                                                        data-id="@t.Id" title="Ver QR de check-in">
-                                                    <i class="fas fa-qrcode"></i> Ver QR
-                                                </button>
+                                                <div class="qr-button-container" 
+                                                     data-fecha="@t.Fecha.ToString("yyyy-MM-dd")" 
+                                                     data-hora="@t.Hora"
+                                                     data-turno-id="@t.Id">
+                                                    <button type="button" class="btn btn-sm btn-primary view-qr-btn d-none" 
+                                                            data-id="@t.Id" title="Ver QR de check-in">
+                                                        <i class="fas fa-qrcode"></i> Ver QR
+                                                    </button>
+                                                    <div class="qr-time-message text-muted small">
+                                                        <i class="fas fa-clock"></i>
+                                                        <span class="message-text">Calculando disponibilidad...</span>
+                                                    </div>
+                                                </div>
                                             }
                                             else
                                             {
@@ -215,12 +224,112 @@
 
 @section Scripts {
 <script>
+    // Configuración de zona horaria Argentina
+    const ARGENTINA_TIMEZONE = 'America/Argentina/Buenos_Aires';
+    
+    // Función para convertir fecha/hora del turno a timestamp UTC
+    function getTurnoTimestamp(fecha, hora) {
+        try {
+            // Crear fecha en zona horaria Argentina
+            const fechaStr = `${fecha}T${hora}:00`;
+            const fechaArg = new Date(fechaStr + '-03:00'); // Forzar zona Argentina (UTC-3)
+            return fechaArg.getTime();
+        } catch (error) {
+            console.error('Error al parsear fecha/hora:', error);
+            return null;
+        }
+    }
+    
+    // Función para verificar si el QR debería estar disponible
+    function shouldShowQRButton(fecha, hora) {
+        const turnoTimestamp = getTurnoTimestamp(fecha, hora);
+        if (!turnoTimestamp) return { show: false, message: 'Error en fecha/hora' };
+        
+        const now = Date.now();
+        const thirtyMinutesBefore = turnoTimestamp - (30 * 60 * 1000); // 30 minutos antes
+        const oneHourAfter = turnoTimestamp + (60 * 60 * 1000); // 1 hora después
+        
+        if (now < thirtyMinutesBefore) {
+            const turnoDate = new Date(turnoTimestamp);
+            const timeUntil = Math.ceil((thirtyMinutesBefore - now) / (60 * 1000)); // minutos hasta
+            
+            if (timeUntil > 1440) { // más de 24 horas
+                const days = Math.ceil(timeUntil / 1440);
+                return { 
+                    show: false, 
+                    message: `Disponible ${days} día${days > 1 ? 's' : ''} antes del turno (${turnoDate.toLocaleDateString('es-AR')} ${hora})` 
+                };
+            } else if (timeUntil > 60) { // más de 1 hora
+                const hours = Math.ceil(timeUntil / 60);
+                return { 
+                    show: false, 
+                    message: `Disponible ${hours} hora${hours > 1 ? 's' : ''} antes del turno (${hora})` 
+                };
+            } else {
+                return { 
+                    show: false, 
+                    message: `Disponible en ${timeUntil} minuto${timeUntil > 1 ? 's' : ''} (${hora})` 
+                };
+            }
+        }
+        
+        if (now > oneHourAfter) {
+            return { 
+                show: false, 
+                message: 'QR expirado (más de 1 hora después del turno)' 
+            };
+        }
+        
+        // Dentro de la ventana válida
+        if (now >= turnoTimestamp) {
+            const minutesAfter = Math.floor((now - turnoTimestamp) / (60 * 1000));
+            return { 
+                show: true, 
+                message: `QR disponible (turno hace ${minutesAfter} min)` 
+            };
+        } else {
+            const minutesBefore = Math.floor((turnoTimestamp - now) / (60 * 1000));
+            return { 
+                show: true, 
+                message: `QR disponible (turno en ${minutesBefore} min)` 
+            };
+        }
+    }
+    
+    // Función para actualizar la disponibilidad de QR
+    function updateQRAvailability() {
+        document.querySelectorAll('.qr-button-container').forEach(container => {
+            const fecha = container.dataset.fecha;
+            const hora = container.dataset.hora;
+            const button = container.querySelector('.view-qr-btn');
+            const messageElement = container.querySelector('.message-text');
+            
+            const availability = shouldShowQRButton(fecha, hora);
+            
+            if (availability.show) {
+                button.classList.remove('d-none');
+                container.querySelector('.qr-time-message').classList.add('d-none');
+            } else {
+                button.classList.add('d-none');
+                container.querySelector('.qr-time-message').classList.remove('d-none');
+                messageElement.textContent = availability.message;
+            }
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         const modalElement = document.getElementById('qrModal');
         const qrModal = new bootstrap.Modal(modalElement);
 
+        // Actualizar disponibilidad inicialmente
+        updateQRAvailability();
+        
+        // Actualizar cada 30 segundos para cambios en tiempo real
         setInterval(() => {
-            window.location.reload();
+            updateQRAvailability();
+            
+            // Solo recargar página cada 30 segundos si hay cambios que requieran datos del servidor
+            // Removemos el auto-reload para evitar interrumpir la experiencia del usuario
         }, 30000);
 
         document.querySelectorAll('.view-qr-btn').forEach(btn => {
@@ -258,7 +367,7 @@
                             expiresText.innerHTML = '<i class="fas fa-check-circle"></i> <strong>QR ACTIVO</strong> - Válido hasta ' + expiresAt.toLocaleString();
                         }
                     } else {
-                        const msg = (data && data.message) ? data.message : 'El QR está caducado o el turno ha finalizado';
+                        const msg = (data && data.message) ? data.message : 'El QR no está disponible en este momento. Verifique que esté en la ventana de tiempo correcta (30 min antes - 1 hora después del turno).';
                         document.getElementById('qrImage').style.display = 'none';
                         document.getElementById('qrExpires').innerText = msg;
                         const link = document.getElementById('qrLink');
