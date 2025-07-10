@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SpaAdmin.Models;
 using SpaAdmin.Services;
 
 namespace SpaAdmin.Controllers
 {
+    [Authorize]
     public class ProfesionalesController : Controller
     {
         private readonly IApiClient _apiClient;
@@ -343,4 +345,4 @@ namespace SpaAdmin.Controllers
         public string? Email { get; set; }
         public string? Role { get; set; }
     }
-} 
+}
