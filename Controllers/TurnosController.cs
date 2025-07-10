@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SpaAdmin.Models;
 using SpaAdmin.Services;
 
 namespace SpaAdmin.Controllers
 {
+    [Authorize]
     public class TurnosController : Controller
     {
         private readonly IApiClient _api;

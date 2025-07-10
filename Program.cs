@@ -29,6 +29,14 @@ builder.Services.AddScoped<IValidationService, ValidationService>();
 // Agregar servicios MVC
 builder.Services.AddControllersWithViews();
 
+// Configuración de autenticación con cookies
+builder.Services.AddAuthentication("Cookies")
+    .AddCookie("Cookies", options =>
+    {
+        options.LoginPath = "/Cuenta/Login";
+        options.LogoutPath = "/Cuenta/Logout";
+    });
+
 // Configurar HttpClient para ApiAuthService con BaseAddress
 builder.Services.AddHttpClient<IApiAuthService, ApiAuthService>(client =>
 {
@@ -81,6 +89,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

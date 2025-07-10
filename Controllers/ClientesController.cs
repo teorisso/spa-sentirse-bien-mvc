@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SpaAdmin.Data;
 using SpaAdmin.Models;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SpaAdmin.Controllers
 {
+    [Authorize]
     public class ClientesController : Controller
     {
         private readonly ApplicationDbContext _context;
