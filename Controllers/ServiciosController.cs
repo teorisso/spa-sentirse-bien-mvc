@@ -39,13 +39,18 @@ public class ServiciosController : Controller
         ViewBag.TotalPages = (int)Math.Ceiling((double)total / pageSize);
         ViewBag.CurrentCategoria = categoria;
 
-        // Obtener tipos únicos para filtro (equivalente a categorías)
-        var categorias = await _context.Servicios
-            .Distinct<string>("tipo", Builders<Servicio>.Filter.Empty)
+        // Obtener tipos únicos para filtro usando LINQ en lugar de MongoDB Distinct
+        var todosLosServicios = await _context.Servicios
+            .Find(Builders<Servicio>.Filter.Empty)
             .ToListAsync();
         
-        // Filtrar valores nulos y vacíos
-        categorias = categorias.Where(c => !string.IsNullOrEmpty(c)).ToList();
+        var categorias = todosLosServicios
+            .Where(s => !string.IsNullOrEmpty(s.Tipo))
+            .Select(s => s.Tipo)
+            .Distinct()
+            .OrderBy(c => c)
+            .ToList();
+        
         ViewBag.Categorias = categorias;
 
         return View(servicios);

@@ -3,81 +3,187 @@
     ViewData["Title"] = "Gestión de Turnos";
 }
 
-<h2>Gestión de Turnos</h2>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-calendar-alt"></i> Gestión de Turnos</h2>
+                <div class="text-muted">
+                    <i class="fas fa-users"></i> Total de turnos: <strong>@Model.Count()</strong>
+                </div>
+            </div>
 
-<form class="row g-3 mb-4">
-    <div class="col-md-3">
-        <label class="form-label">Estado</label>
-        <select name="estado" class="form-select" onchange="this.form.submit()">
-            <option value="todos"         selected="@("todos"==ViewBag.EstadoActual)">Todos</option>
-            <option value="pendiente"     selected="@("pendiente"==ViewBag.EstadoActual)">Pendiente</option>
-            <option value="confirmado"    selected="@("confirmado"==ViewBag.EstadoActual)">Confirmado</option>
-            <option value="realizado"     selected="@("realizado"==ViewBag.EstadoActual)">Realizado</option>
-            <option value="cancelado"     selected="@("cancelado"==ViewBag.EstadoActual)">Cancelado</option>
-        </select>
-    </div>
-    <div class="col-md-3">
-        <label class="form-label">Fecha</label>
-        <input type="date" name="fecha" class="form-control"
-               value="@ViewBag.FechaActual" onchange="this.form.submit()"/>
-    </div>
-</form>
-
-<table class="table table-bordered table-hover">
-    <thead class="table-light">
-        <tr>
-            <th>Cliente</th>
-            <th>Servicio</th>
-            <th>Profesional</th>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>Estado</th>
-            <th>Check-in QR</th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var t in Model)
-{
-    <tr>
-        <td>@(t.Cliente?.FirstName) @(t.Cliente?.LastName)</td>
-        <td>@t.Servicio?.Nombre</td>
-        <td>@(t.Profesional?.FirstName) @(t.Profesional?.LastName)</td>
-        <td>@t.Fecha.ToString("dd/MM/yyyy")</td>
-        <td>@t.Hora</td>
-        <td>
-            <span class="badge bg-@(GetStatusColor(t.Estado))">@t.Estado</span>
-        </td>
-        <td>
-            @if (t.Estado == "confirmado")
+            @if (TempData["Success"] != null)
             {
-                <button type="button" class="btn btn-sm btn-primary view-qr-btn" 
-                        data-id="@t.Id" title="Ver QR de check-in">
-                    <i class="bi bi-qr-code"></i> Ver QR
-                </button>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
             }
-            else
+            @if (TempData["Error"] != null)
             {
-                <span class="text-muted small">Solo disponible para turnos confirmados</span>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
             }
-        </td>
-    </tr>
-}
-    </tbody>
-</table>
 
-<!-- Modal QR actualizado -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="estado" class="form-label"><i class="fas fa-filter"></i> Estado:</label>
+                            <select name="estado" id="estado" class="form-select">
+                                <option value="todos" selected="@("todos"==ViewBag.EstadoActual)">Todos los estados</option>
+                                <option value="pendiente" selected="@("pendiente"==ViewBag.EstadoActual)">Pendiente</option>
+                                <option value="confirmado" selected="@("confirmado"==ViewBag.EstadoActual)">Confirmado</option>
+                                <option value="realizado" selected="@("realizado"==ViewBag.EstadoActual)">Realizado</option>
+                                <option value="no_realizado" selected="@("no_realizado"==ViewBag.EstadoActual)">No Realizado</option>
+                                <option value="cancelado" selected="@("cancelado"==ViewBag.EstadoActual)">Cancelado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="fecha" class="form-label"><i class="fas fa-calendar"></i> Fecha:</label>
+                            <input type="date" name="fecha" id="fecha" class="form-control" value="@ViewBag.FechaActual"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="cliente" class="form-label"><i class="fas fa-search"></i> Buscar Cliente:</label>
+                            <input type="text" name="cliente" id="cliente" class="form-control" 
+                                   placeholder="Nombre del cliente..." value="@ViewBag.ClienteActual"/>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-outline-primary me-2">
+                                <i class="fas fa-filter"></i> Filtrar
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Limpiar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th><i class="fas fa-user"></i> Cliente</th>
+                                        <th><i class="fas fa-spa"></i> Servicio</th>
+                                        <th><i class="fas fa-user-md"></i> Profesional</th>
+                                        <th><i class="fas fa-calendar"></i> Fecha</th>
+                                        <th><i class="fas fa-clock"></i> Hora</th>
+                                        <th><i class="fas fa-info-circle"></i> Estado</th>
+                                        <th width="200"><i class="fas fa-qrcode"></i> Check-in QR</th>
+                                        <th width="180"><i class="fas fa-cog"></i> Admin</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var t in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong>@(t.Cliente?.FirstName) @(t.Cliente?.LastName)</strong>
+                                        </td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(t.Servicio?.Nombre))
+                                            {
+                                                <span>@t.Servicio.Nombre</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Sin servicio</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (t.Profesional != null)
+                                            {
+                                                <span>@(t.Profesional.FirstName) @(t.Profesional.LastName)</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Sin asignar</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <i class="fas fa-calendar-day me-1"></i>
+                                            @t.Fecha.ToString("dd/MM/yyyy")
+                                        </td>
+                                        <td>
+                                            <i class="fas fa-clock me-1"></i>
+                                            <strong>@t.Hora</strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-@(GetStatusColor(t.Estado)) fs-6">
+                                                <i class="fas @(GetStatusIcon(t.Estado)) me-1"></i>
+                                                @t.Estado.ToUpper()
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if (t.Estado == "confirmado")
+                                            {
+                                                <button type="button" class="btn btn-sm btn-primary view-qr-btn" 
+                                                        data-id="@t.Id" title="Ver QR de check-in">
+                                                    <i class="fas fa-qrcode"></i> Ver QR
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted small">
+                                                    <i class="fas fa-info-circle"></i> 
+                                                    Solo para turnos confirmados
+                                                </span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <select class="form-select form-select-sm estado-select" 
+                                                    data-turno-id="@t.Id" 
+                                                    data-estado-actual="@t.Estado">
+                                                <option value="pendiente" selected="@(t.Estado == "pendiente")">Pendiente</option>
+                                                <option value="confirmado" selected="@(t.Estado == "confirmado")">Confirmado</option>
+                                                <option value="realizado" selected="@(t.Estado == "realizado")">Realizado</option>
+                                                <option value="no_realizado" selected="@(t.Estado == "no_realizado")">No Realizado</option>
+                                                <option value="cancelado" selected="@(t.Estado == "cancelado")">Cancelado</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No hay turnos encontrados</h4>
+                            <p class="text-muted">No se encontraron turnos con los filtros aplicados.</p>
+                            <a asp-action="Index" class="btn btn-outline-primary">
+                                <i class="fas fa-times"></i> Limpiar Filtros
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">
-            <i class="bi bi-qr-code"></i> QR de Check-in
+            <i class="fas fa-qrcode"></i> QR de Check-in
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body text-center">
         <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i>
+            <i class="fas fa-info-circle"></i>
             <strong>Check-in automático:</strong> El cliente debe escanear este QR al llegar
         </div>
         
@@ -85,7 +191,7 @@
         
         <div class="mb-3">
             <a id="qrLink" href="#" target="_blank" class="btn btn-outline-primary">
-                <i class="bi bi-box-arrow-up-right"></i> Abrir enlace QR
+                <i class="fas fa-external-link-alt"></i> Abrir enlace QR
             </a>
         </div>
         
@@ -95,7 +201,7 @@
         
         <div class="mt-2">
             <small class="text-muted">
-                <i class="bi bi-shield-check"></i> 
+                <i class="fas fa-shield-alt"></i> 
                 QR único por turno • Válido 1 hora después del horario
             </small>
         </div>
@@ -113,7 +219,6 @@
         const modalElement = document.getElementById('qrModal');
         const qrModal = new bootstrap.Modal(modalElement);
 
-        // Actualizar cada 30 segundos para mostrar botones actualizados
         setInterval(() => {
             window.location.reload();
         }, 30000);
@@ -122,7 +227,6 @@
             btn.addEventListener('click', async () => {
                 const id = btn.getAttribute('data-id');
                 
-                // Cambiar estado del botón mientras carga
                 btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Cargando...';
                 btn.disabled = true;
                 
@@ -133,9 +237,7 @@
                         data = await res.json();
                     }
 
-                    // Condición de éxito con data válida
                     if (res.ok && data && data.success && data.data) {
-                        // Mostrar QR siempre
                         document.getElementById('qrImage').style.display = 'block';
                         document.getElementById('qrImage').src = 'data:image/png;base64,' + data.data.qrCodeImageBase64;
                         
@@ -143,23 +245,19 @@
                         link.href = data.data.qrCodeUrl;
                         link.style.display = 'inline-block';
                         
-                        // Verificar si está expirado
                         const expiresAt = new Date(data.data.expiresAt);
                         const now = new Date();
                         const statusDiv = document.getElementById('qrStatus');
                         const expiresText = document.getElementById('qrExpires');
                         
                         if (now > expiresAt) {
-                            // QR caducado
                             statusDiv.className = 'alert alert-danger';
-                            expiresText.innerHTML = '<i class="bi bi-exclamation-triangle"></i> <strong>QR CADUCADO</strong> - Expiró el ' + expiresAt.toLocaleString() + '. Al escanearlo se marcará el turno como "no realizado".';
+                            expiresText.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <strong>QR CADUCADO</strong> - Expiró el ' + expiresAt.toLocaleString() + '. Al escanearlo se marcará el turno como "no_realizado".';
                         } else {
-                            // QR activo
                             statusDiv.className = 'alert alert-success';
-                            expiresText.innerHTML = '<i class="bi bi-check-circle"></i> <strong>QR ACTIVO</strong> - Válido hasta ' + expiresAt.toLocaleString();
+                            expiresText.innerHTML = '<i class="fas fa-check-circle"></i> <strong>QR ACTIVO</strong> - Válido hasta ' + expiresAt.toLocaleString();
                         }
                     } else {
-                        // Caso de error / QR caducado / turno fuera de ventana
                         const msg = (data && data.message) ? data.message : 'El QR está caducado o el turno ha finalizado';
                         document.getElementById('qrImage').style.display = 'none';
                         document.getElementById('qrExpires').innerText = msg;
@@ -167,23 +265,93 @@
                         link.style.display = 'none';
                     }
 
-                    // Mostrar el modal siempre
                     qrModal.show();
                 } catch (error) {
-                    // Error de red o excepción
                     document.getElementById('qrImage').style.display = 'none';
                     document.getElementById('qrExpires').innerText = 'No se pudo obtener el QR: ' + error.message;
                     const link = document.getElementById('qrLink');
                     link.style.display = 'none';
                     qrModal.show();
                 } finally {
-                    // Restaurar botón
-                    btn.innerHTML = '<i class="bi bi-qr-code"></i> Ver QR';
+                    btn.innerHTML = '<i class="fas fa-qrcode"></i> Ver QR';
                     btn.disabled = false;
                 }
             });
         });
+
+        document.querySelectorAll('.estado-select').forEach(select => {
+            select.addEventListener('change', async function() {
+                const turnoId = this.getAttribute('data-turno-id');
+                const estadoActual = this.getAttribute('data-estado-actual');
+                const nuevoEstado = this.value;
+                
+                if (nuevoEstado === estadoActual) {
+                    return;
+                }
+                
+                const selectElement = this;
+                const originalValue = estadoActual;
+                
+                try {
+                    selectElement.disabled = true;
+                    
+                    const response = await fetch('/Turnos/UpdateEstado', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `id=${encodeURIComponent(turnoId)}&estado=${encodeURIComponent(nuevoEstado)}`
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        selectElement.setAttribute('data-estado-actual', nuevoEstado);
+                        
+                        const badge = selectElement.closest('tr').querySelector('.badge');
+                        if (badge) {
+                            badge.className = 'badge bg-' + getStatusColor(nuevoEstado) + ' fs-6';
+                            badge.innerHTML = '<i class="fas ' + getStatusIcon(nuevoEstado) + ' me-1"></i>' + nuevoEstado.toUpperCase();
+                        }
+                        
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        alert('Error: ' + result.message);
+                        selectElement.value = originalValue;
+                    }
+                } catch (error) {
+                    alert('Error al actualizar el estado: ' + error.message);
+                    selectElement.value = originalValue;
+                } finally {
+                    selectElement.disabled = false;
+                }
+            });
+        });
     });
+
+    function getStatusColor(estado) {
+        switch(estado) {
+            case 'pendiente': return 'warning';
+            case 'confirmado': return 'success';
+            case 'realizado': return 'primary';
+            case 'no_realizado': return 'dark';
+            case 'cancelado': return 'danger';
+            default: return 'secondary';
+        }
+    }
+
+    function getStatusIcon(estado) {
+        switch(estado) {
+            case 'pendiente': return 'fa-clock';
+            case 'confirmado': return 'fa-check-circle';
+            case 'realizado': return 'fa-star';
+            case 'no_realizado': return 'fa-times-circle';
+            case 'cancelado': return 'fa-ban';
+            default: return 'fa-question-circle';
+        }
+    }
 </script>
 }
 
@@ -195,8 +363,22 @@
             "pendiente" => "warning",
             "confirmado" => "success",
             "realizado" => "primary",
+            "no_realizado" => "dark",
             "cancelado" => "danger",
             _ => "secondary"
+        };
+    }
+
+    string GetStatusIcon(string estado)
+    {
+        return estado switch
+        {
+            "pendiente" => "fa-clock",
+            "confirmado" => "fa-check-circle",
+            "realizado" => "fa-star",
+            "no_realizado" => "fa-times-circle",
+            "cancelado" => "fa-ban",
+            _ => "fa-question-circle"
         };
     }
 }

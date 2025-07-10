@@ -13,7 +13,6 @@
                 </a>
             </div>
 
-            <!-- Mensajes de éxito/error -->
             @if (TempData["Success"] != null)
             {
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -29,7 +28,6 @@
                 </div>
             }
 
-            <!-- Filtros -->
             <div class="card mb-4">
                 <div class="card-body">
                     <form method="get" class="row g-3">
@@ -58,7 +56,6 @@
                 </div>
             </div>
 
-            <!-- Tabla de servicios -->
             <div class="card">
                 <div class="card-body">
                     @if (Model.Any())
@@ -133,7 +130,6 @@
                             </table>
                         </div>
 
-                        <!-- Paginación -->
                         @if (ViewBag.TotalPages > 1)
                         {
                             <nav aria-label="Paginación de servicios" class="mt-4">
@@ -169,7 +165,6 @@
     </div>
 </div>
 
-<!-- Modal de confirmación para eliminar -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
