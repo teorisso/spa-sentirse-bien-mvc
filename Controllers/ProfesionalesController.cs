@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SpaAdmin.Models;
 using SpaAdmin.Services;
 
 namespace SpaAdmin.Controllers
 {
+    [Authorize(Policy = "AdminOrProfessional")]
     public class ProfesionalesController : Controller
     {
         private readonly IApiClient _apiClient;
@@ -46,6 +48,7 @@ namespace SpaAdmin.Controllers
         /// <summary>
         /// Mostrar vista para crear nuevo profesional
         /// </summary>
+        [Authorize(Policy = "AdminOnly")]
         public IActionResult Create()
         {
             return View();
@@ -56,6 +59,7 @@ namespace SpaAdmin.Controllers
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Create(CreateProfesionalDto model)
         {
             try
@@ -133,6 +137,7 @@ namespace SpaAdmin.Controllers
         /// <summary>
         /// Mostrar vista para editar profesional
         /// </summary>
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Edit(string id)
         {
             try
@@ -177,6 +182,7 @@ namespace SpaAdmin.Controllers
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Edit(EditProfesionalDto model)
         {
             try
@@ -222,6 +228,7 @@ namespace SpaAdmin.Controllers
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Delete(string id)
         {
             try

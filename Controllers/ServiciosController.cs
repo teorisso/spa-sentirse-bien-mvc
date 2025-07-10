@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MongoDB.Driver;
 using SpaAdmin.Data;
 using SpaAdmin.Models;
 
+[Authorize(Policy = "AdminOrProfessional")]
 public class ServiciosController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -51,6 +53,7 @@ public class ServiciosController : Controller
         return View(servicios);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     public IActionResult Create()
     {
         // Preparar dropdown de categorías
@@ -67,6 +70,7 @@ public class ServiciosController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Create(Servicio servicio)
     {
         if (ModelState.IsValid)
@@ -90,6 +94,7 @@ public class ServiciosController : Controller
         return View(servicio);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Edit(string id)
     {
         if (string.IsNullOrEmpty(id))
@@ -121,6 +126,7 @@ public class ServiciosController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Edit(string id, Servicio servicio)
     {
         if (id != servicio.Id)
@@ -174,6 +180,7 @@ public class ServiciosController : Controller
     }
 
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Delete(string id)
     {
         if (string.IsNullOrEmpty(id))

@@ -3,6 +3,7 @@ using SpaAdmin.Data;
 using DotNetEnv;
 using SpaAdmin.Services;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 // Cargar variables de entorno desde el archivo .env
 Env.Load();
@@ -25,6 +26,31 @@ builder.Services.AddScoped<ApplicationDbContext>();
 
 // Registrar servicios de validación
 builder.Services.AddScoped<IValidationService, ValidationService>();
+
+// Configurar autenticación con cookies
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8); // Sesión de 8 horas
+        options.SlidingExpiration = true; // Renovar automáticamente
+        options.Cookie.Name = "SpaAdminAuth";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+    });
+
+// Configurar autorización
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => 
+        policy.RequireRole("admin"));
+    options.AddPolicy("AdminOrProfessional", policy => 
+        policy.RequireAssertion(context => 
+            context.User.IsInRole("admin") || context.User.IsInRole("profesional")));
+});
 
 // Agregar servicios MVC
 builder.Services.AddControllersWithViews();
@@ -81,6 +107,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// Middleware de autenticación y autorización
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

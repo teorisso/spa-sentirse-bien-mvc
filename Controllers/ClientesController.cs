@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SpaAdmin.Data;
 using SpaAdmin.Models;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SpaAdmin.Controllers
 {
+    [Authorize(Policy = "AdminOrProfessional")]
     public class ClientesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -61,6 +63,7 @@ namespace SpaAdmin.Controllers
             }
         }
 
+        [Authorize(Policy = "AdminOnly")]
         public IActionResult Create()
         {
             return View();
@@ -68,6 +71,7 @@ namespace SpaAdmin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Create(Cliente cliente)
         {
             try
@@ -100,6 +104,7 @@ namespace SpaAdmin.Controllers
             }
         }
 
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Edit(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -127,6 +132,7 @@ namespace SpaAdmin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Edit(string id, Cliente cliente)
         {
             if (string.IsNullOrEmpty(id))
@@ -177,6 +183,7 @@ namespace SpaAdmin.Controllers
             }
         }
 
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Delete(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -204,6 +211,7 @@ namespace SpaAdmin.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             if (string.IsNullOrEmpty(id))
