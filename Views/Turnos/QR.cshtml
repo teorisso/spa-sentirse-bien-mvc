@@ -1,0 +1,16 @@
+@model SpaAdmin.Models.QRCodeResponse
+@{
+    ViewData["Title"] = "QR de Check-in";
+}
+
+<h2>Código QR de Check-in</h2>
+
+<p><strong>ID:</strong> @Model.QRCodeId</p>
+<p><strong>Expira:</strong> @Model.ExpiresAt.ToLocalTime().ToString("g")</p>
+
+<img src="data:image/png;base64,@Model.QRCodeImageBase64"
+     alt="QR" class="img-fluid" />
+
+<p class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">Volver a turnos</a>
+</p>

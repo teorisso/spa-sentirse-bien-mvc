@@ -1,0 +1,25 @@
+@model SpaAdmin.Models.Cliente
+@{
+    ViewData["Title"] = "Detalles del Cliente";
+}
+
+<h2>Detalles del Cliente</h2>
+
+<!-- <div class="mb-3">
+    <label class="form-label">Id:</label>
+    <span>@Model.Id</span>
+</div> -->
+<div class="mb-3">
+    <label class="form-label">Nombre:</label>
+    <span>@Model.FirstName</span>
+</div>
+<div class="mb-3">
+    <label class="form-label">Apellido:</label>
+    <span>@Model.LastName</span>
+</div>
+<div class="mb-3">
+    <label class="form-label">Email:</label>
+    <span>@Model.Email</span>
+</div>
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
+<a asp-action="Index" class="btn btn-secondary">Volver al listado</a> 

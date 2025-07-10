@@ -1,0 +1,143 @@
+@model IEnumerable<SpaAdmin.Models.UserDto>
+@{
+    ViewData["Title"] = "Listado de Profesionales";
+}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            
+            @* Mostrar mensajes de éxito o error *@
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="fas fa-user-md"></i> Profesionales</h4>
+                    <a asp-action="Create" class="btn btn-success btn-sm">
+                        <i class="fas fa-plus"></i> Nuevo Profesional
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (!Model.Any())
+                    {
+                        <div class="alert alert-info text-center mb-0">
+                            <i class="fas fa-info-circle"></i>
+                            No hay profesionales registrados.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mb-3">
+                            <small class="text-muted">
+                                <i class="fas fa-users"></i> Total de profesionales: <strong>@Model.Count()</strong>
+                            </small>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th><i class="fas fa-hashtag"></i> ID</th>
+                                        <th><i class="fas fa-user"></i> Nombre Completo</th>
+                                        <th><i class="fas fa-envelope"></i> Email</th>
+                                        <th><i class="fas fa-user-tag"></i> Rol</th>
+                                        <th class="text-end"><i class="fas fa-cogs"></i> Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var profesional in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <code class="text-muted">@profesional.Id.Substring(0, 8)...</code>
+                                            </td>
+                                            <td>
+                                                <strong>@profesional.FullName</strong>
+                                            </td>
+                                            <td>
+                                                <a href="mailto:@profesional.Email" class="text-decoration-none">
+                                                    @profesional.Email
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-user-md"></i> @profesional.Role
+                                                </span>
+                                            </td>
+                                            <td class="text-end">
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Details" asp-route-id="@profesional.Id" 
+                                                       class="btn btn-info btn-sm" title="Ver detalles">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a asp-action="Edit" asp-route-id="@profesional.Id" 
+                                                       class="btn btn-warning btn-sm" title="Editar">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-danger btn-sm" 
+                                                            title="Eliminar" onclick="confirmarEliminacion('@profesional.Id', '@profesional.FullName')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmarEliminacion(id, nombre) {
+    if (confirm(`¿Estás seguro de que deseas eliminar al profesional "${nombre}"?\n\nEsta acción no se puede deshacer.`)) {
+        // Crear formulario para envío POST
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '@Url.Action("Delete", "Profesionales")';
+        
+        // Obtener token anti-forgery de manera más confiable
+        var existingToken = document.querySelector('input[name="__RequestVerificationToken"]');
+        if (existingToken) {
+            var tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = '__RequestVerificationToken';
+            tokenInput.value = existingToken.value;
+            form.appendChild(tokenInput);
+        } else {
+            alert('Error: No se pudo obtener el token de seguridad. Recargue la página e intente nuevamente.');
+            return;
+        }
+        
+        // Agregar ID
+        var idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'id';
+        idInput.value = id;
+        form.appendChild(idInput);
+        
+        // Enviar formulario
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+
+@Html.AntiForgeryToken() 
