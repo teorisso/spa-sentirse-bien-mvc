@@ -32,7 +32,7 @@
             <th>Fecha</th>
             <th>Hora</th>
             <th>Estado</th>
-            <th>QR</th>
+            <th>Check-in QR</th>
         </tr>
     </thead>
     <tbody>
@@ -44,13 +44,20 @@
         <td>@(t.Profesional?.FirstName) @(t.Profesional?.LastName)</td>
         <td>@t.Fecha.ToString("dd/MM/yyyy")</td>
         <td>@t.Hora</td>
-        <td>@t.Estado</td>
+        <td>
+            <span class="badge bg-@(GetStatusColor(t.Estado))">@t.Estado</span>
+        </td>
         <td>
             @if (t.Estado == "confirmado")
             {
-                <button type="button" class="btn btn-sm btn-primary generate-qr-btn" data-id="@t.Id">
-                    Generar QR
+                <button type="button" class="btn btn-sm btn-primary view-qr-btn" 
+                        data-id="@t.Id" title="Ver QR de check-in">
+                    <i class="bi bi-qr-code"></i> Ver QR
                 </button>
+            }
+            else
+            {
+                <span class="text-muted small">Solo disponible para turnos confirmados</span>
             }
         </td>
     </tr>
@@ -58,20 +65,40 @@
     </tbody>
 </table>
 
-<!-- Modal QR -->
+<!-- Modal QR actualizado -->
 <div class="modal fade" id="qrModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Código QR de Check-in</h5>
+        <h5 class="modal-title">
+            <i class="bi bi-qr-code"></i> QR de Check-in
+        </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body text-center">
-        <img id="qrImage" class="img-fluid" alt="QR" />
-        <p class="mt-2">
-            <a id="qrLink" href="#" target="_blank" class="btn btn-outline-primary btn-sm">Abrir enlace QR</a>
-        </p>
-        <p class="mt-2"><small id="qrExpires"></small></p>
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            <strong>Check-in automático:</strong> El cliente debe escanear este QR al llegar
+        </div>
+        
+        <img id="qrImage" class="img-fluid mb-3" alt="QR" style="max-width: 250px;"/>
+        
+        <div class="mb-3">
+            <a id="qrLink" href="#" target="_blank" class="btn btn-outline-primary">
+                <i class="bi bi-box-arrow-up-right"></i> Abrir enlace QR
+            </a>
+        </div>
+        
+        <div id="qrStatus" class="alert">
+            <small id="qrExpires"></small>
+        </div>
+        
+        <div class="mt-2">
+            <small class="text-muted">
+                <i class="bi bi-shield-check"></i> 
+                QR único por turno • Válido 1 hora después del horario
+            </small>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -86,27 +113,90 @@
         const modalElement = document.getElementById('qrModal');
         const qrModal = new bootstrap.Modal(modalElement);
 
-        // Al cerrar el modal refrescamos la página para ver el nuevo estado del turno
-        modalElement.addEventListener('hidden.bs.modal', () => window.location.reload());
+        // Actualizar cada 30 segundos para mostrar botones actualizados
+        setInterval(() => {
+            window.location.reload();
+        }, 30000);
 
-        document.querySelectorAll('.generate-qr-btn').forEach(btn => {
+        document.querySelectorAll('.view-qr-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const id = btn.getAttribute('data-id');
+                
+                // Cambiar estado del botón mientras carga
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Cargando...';
+                btn.disabled = true;
+                
                 try {
-                    const res = await fetch('/Turnos/GenerateQRJson?id=' + id, { method: 'POST' });
-                    if (!res.ok) throw new Error('Error');
-                    const data = await res.json();
-                    document.getElementById('qrImage').src = 'data:image/png;base64,' + data.qrCodeImageBase64;
-                    document.getElementById('qrExpires').innerText = 'Expira: ' + new Date(data.expiresAt).toLocaleString();
-                    const link = document.getElementById('qrLink');
-                    link.href = data.qrCodeUrl;
-                    link.textContent = 'Abrir enlace';
+                    const res = await fetch('/Turnos/GetQRJson?id=' + id, { method: 'POST' });
+                    let data = null;
+                    if (res.ok) {
+                        data = await res.json();
+                    }
+
+                    // Condición de éxito con data válida
+                    if (res.ok && data && data.success && data.data) {
+                        // Mostrar QR siempre
+                        document.getElementById('qrImage').style.display = 'block';
+                        document.getElementById('qrImage').src = 'data:image/png;base64,' + data.data.qrCodeImageBase64;
+                        
+                        const link = document.getElementById('qrLink');
+                        link.href = data.data.qrCodeUrl;
+                        link.style.display = 'inline-block';
+                        
+                        // Verificar si está expirado
+                        const expiresAt = new Date(data.data.expiresAt);
+                        const now = new Date();
+                        const statusDiv = document.getElementById('qrStatus');
+                        const expiresText = document.getElementById('qrExpires');
+                        
+                        if (now > expiresAt) {
+                            // QR caducado
+                            statusDiv.className = 'alert alert-danger';
+                            expiresText.innerHTML = '<i class="bi bi-exclamation-triangle"></i> <strong>QR CADUCADO</strong> - Expiró el ' + expiresAt.toLocaleString() + '. Al escanearlo se marcará el turno como "no realizado".';
+                        } else {
+                            // QR activo
+                            statusDiv.className = 'alert alert-success';
+                            expiresText.innerHTML = '<i class="bi bi-check-circle"></i> <strong>QR ACTIVO</strong> - Válido hasta ' + expiresAt.toLocaleString();
+                        }
+                    } else {
+                        // Caso de error / QR caducado / turno fuera de ventana
+                        const msg = (data && data.message) ? data.message : 'El QR está caducado o el turno ha finalizado';
+                        document.getElementById('qrImage').style.display = 'none';
+                        document.getElementById('qrExpires').innerText = msg;
+                        const link = document.getElementById('qrLink');
+                        link.style.display = 'none';
+                    }
+
+                    // Mostrar el modal siempre
                     qrModal.show();
-                } catch {
-                    alert('No se pudo generar el QR');
+                } catch (error) {
+                    // Error de red o excepción
+                    document.getElementById('qrImage').style.display = 'none';
+                    document.getElementById('qrExpires').innerText = 'No se pudo obtener el QR: ' + error.message;
+                    const link = document.getElementById('qrLink');
+                    link.style.display = 'none';
+                    qrModal.show();
+                } finally {
+                    // Restaurar botón
+                    btn.innerHTML = '<i class="bi bi-qr-code"></i> Ver QR';
+                    btn.disabled = false;
                 }
             });
         });
     });
 </script>
+}
+
+@functions {
+    string GetStatusColor(string estado)
+    {
+        return estado switch
+        {
+            "pendiente" => "warning",
+            "confirmado" => "success",
+            "realizado" => "primary",
+            "cancelado" => "danger",
+            _ => "secondary"
+        };
+    }
 }

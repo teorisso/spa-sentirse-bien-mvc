@@ -44,16 +44,45 @@ namespace SpaAdmin.Controllers
             return View(data);
         }
 
-        // GET: /Turnos/QR/{id}
+        // post: /Turnos/GetQRJson
         [HttpPost]
-        public async Task<IActionResult> GenerateQRJson(string id)
+        public async Task<IActionResult> GetQRJson(string id)
         {
-            var url = $"{_cfg["ApiSettings:QREndpoint"]}/turno/{id}/checkin";
-            var qr = await _api.PostAsync<object, QRCodeResponse>(url, new { });
+            try
+            {
+                _log.LogInformation("Solicitando QR para turno: {TurnoId}", id);
+                
+                var url = $"{_cfg["ApiSettings:QREndpoint"]}/turno/{id}/checkin";
+                _log.LogInformation("URL del QR: {Url}", url);
+                
+                var qr = await _api.PostAsync<object, QRCodeResponse>(url, new { });
 
-            if (qr == null) return StatusCode(500, "Error al generar QR");
+                if (qr == null)
+                {
+                    _log.LogError("La API devolvió null para el turno: {TurnoId}", id);
+                    return Json(new { 
+                        success = false, 
+                        message = "No se pudo obtener el QR. Verifique que el turno esté en la ventana de tiempo correcta." 
+                    });
+                }
 
-            return Json(qr);
+                _log.LogInformation("QR obtenido exitosamente para turno: {TurnoId}", id);
+                
+                // Devolver estructura que espera el JavaScript
+                return Json(new { 
+                    success = true, 
+                    data = qr,
+                    message = "QR obtenido exitosamente" 
+                });
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "Error al obtener QR para turno: {TurnoId}", id);
+                return Json(new { 
+                    success = false, 
+                    message = $"Error interno: {ex.Message}" 
+                });
+            }
         }
     }
 }
