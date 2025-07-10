@@ -46,8 +46,12 @@
                             </small>
                         </div>
                         
+                        <div class="mb-3">
+                            <input type="text" id="buscadorProfesionales" class="form-control" placeholder="Buscar profesional por nombre o email...">
+                        </div>
+                        
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover align-middle" id="tablaProfesionales">
                                 <thead class="table-light">
                                     <tr>
                                         <th><i class="fas fa-hashtag"></i> ID</th>
@@ -138,6 +142,24 @@ function confirmarEliminacion(id, nombre) {
         form.submit();
     }
 }
+
+// Buscador de profesionales
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('buscadorProfesionales');
+    const table = document.getElementById('tablaProfesionales');
+    
+    if (input && table) {
+        input.addEventListener('keyup', function () {
+            const filtro = input.value.toLowerCase();
+            const filas = table.querySelectorAll('tbody tr');
+            
+            filas.forEach(fila => {
+                const texto = fila.textContent.toLowerCase();
+                fila.style.display = texto.includes(filtro) ? '' : 'none';
+            });
+        });
+    }
+});
 </script>
 
 @Html.AntiForgeryToken() 
